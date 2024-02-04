@@ -30,6 +30,7 @@ function Button:new(settings)
 end
 
 function Button:draw()
+    self:capture()
     self.stylebox:draw(self.x, self.y, self.width, self.height)
     self.textstyle:draw(self.text, self.x, self.y, self.width, self.height)
 end
