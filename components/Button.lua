@@ -1,5 +1,6 @@
 local Component = require 'components/Component'
 local Stylebox  = require 'components/Stylebox'
+local TextStyle = require 'components/TextStyle'
 
 ---@class Button: Component
 ---@operator call: Button
@@ -9,8 +10,9 @@ local EMPTY     = {}
 ---@class ButtonSettings: ComponentSettings
 ---@field text string
 ---@field stylebox Stylebox
+---@field textstyle TextStyle
 
----@param settings ButtonSettings
+---@param settings? ButtonSettings
 function Button:new(settings)
     settings = settings or EMPTY
     self.super.new(self, settings)
@@ -22,12 +24,14 @@ function Button:new(settings)
         border = 4,
         borderColor = { 0.05, 0.05, 0.05, 1 }
     })
+    self.textstyle = settings.textstyle or TextStyle({
+        color = { 0.75, 0.75, 0.75, 1 }
+    })
 end
 
 function Button:draw()
     self.stylebox:draw(self.x, self.y, self.width, self.height)
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.print(self.text, self.x, self.y)
+    self.textstyle:draw(self.text, self.x, self.y, self.width, self.height)
 end
 
 return Button
