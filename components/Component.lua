@@ -1,3 +1,4 @@
+local Theme = require "components/Theme"
 local getWidth = love.graphics.getWidth
 local getHeight = love.graphics.getHeight
 local getOS = love.system.getOS
@@ -24,9 +25,11 @@ end
 ---@field rotation? integer
 ---@field events? table<ComponentEventName, function[]> Represents a queue list of callbacks.
 ---@field mouseListener? 1|2|3 Determines which mouse button will be heard when clicks are calculated.
----@field parent Container This component may have a Container as its parent. If it has this field represents the parent.
----@field display boolean Determines whether this component is going to be rendered or not.
----@field enabled boolean Determines whether this component is going to execute other events (except 'draw').
+---@field parent? Container This component may have a Container as its parent. If it has this field represents the parent.
+---@field display? boolean Determines whether this component is going to be rendered or not.
+---@field enabled? boolean Determines whether this component is going to execute other events (except 'draw').
+---@field themeVariant? string Determines which variant should this component use.
+---@field themeTree? string Determines which tree should this component use from the theme.
 
 ---@alias ComponentEventName
 ---| "onClick"
@@ -59,6 +62,23 @@ return function(settings)
     Component.mouseListener = settings.mouseListener or 1
     Component.enabled = settings.enabled
     Component.display = settings.display
+    Component.themeTree = settings.themeTree or ""
+    Component.themeVariant = settings.themeVariant or ""
+
+    ---Sets the default variant of the theme tree.
+    function Component:setDefaultVariant()
+        self.themeVariant = Theme.get()[Component.themeTree].Default
+    end
+
+    ---Gets a Style from the current theme.
+    ---@param tree? string
+    ---@param variant? string
+    ---@return table
+    function Component:getStyle(tree, variant)
+        tree = tree or self.themeTree
+        variant = variant or self.themeVariant
+        return Theme.get()[tree].Variant[variant]
+    end
 
     ---Captures onClick, onRelease, onEnter and onLeave events.
     ---This function is going to return immediately if `Component.enabled` is equal to `false`.

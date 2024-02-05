@@ -3,8 +3,11 @@ function love.load()
 
     AndromedaInitialize()
 
-    local AppStartMenu = require "pages/AppStartMenu"
-    local roomy = require "libraries/roomy"
+    local AppStartMenu = require 'pages/AppStartMenu'
+    local roomy = require 'libraries/roomy'
+    local Theme = require 'components/Theme'
+
+    require 'app/themes/Andromeda'
 
     GlobalPages = {
         AppStartMenu = AppStartMenu()
