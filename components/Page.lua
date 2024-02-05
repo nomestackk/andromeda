@@ -3,8 +3,12 @@ local VDiv = require "components/VDiv"
 ---@class PageSettings
 ---@field root? Container Represents the root of the page which must be a Container. Defaults to a VDiv if this field is nil.
 
----@param settings PageSettings
+local EMPTY = {}
+
+---@param settings? PageSettings
 return function(settings)
+    settings = settings or EMPTY
+
     ---@class Page
     local Page = {}
 
