@@ -1,5 +1,3 @@
-local Object = require 'libraries/classic'
-
 local getWidth = love.graphics.getWidth
 local getHeight = love.graphics.getHeight
 local getOS = love.system.getOS
@@ -18,92 +16,116 @@ local function getPointInsideOf(x, y, width, height, pointX, pointY)
     return pointX > x and pointX < x + width and pointY > y and pointY < y + height
 end
 
----@class Component: Object
----@operator call: Component
-local Component = Object:extend()
-local EMPTY = {}
-
 ---@class ComponentSettings
----@field x number
----@field y number
----@field width number
----@field height number
----@field rotation integer
----@field events table<ComponentEventName, function[]>
----@field mouseListener 1|2|3
+---@field x? number
+---@field y? number
+---@field width? number
+---@field height? number
+---@field rotation? integer
+---@field events? table<ComponentEventName, function[]> Represents a queue list of callbacks.
+---@field mouseListener? 1|2|3 Determines which mouse button will be heard when clicks are calculated.
+---@field parent Container This component may have a Container as its parent. If it has this field represents the parent.
+---@field display boolean Determines whether this component is going to be rendered or not.
+---@field enabled boolean Determines whether this component is going to execute other events (except 'draw').
 
 ---@alias ComponentEventName
 ---| "onClick"
 ---| "onRelease"
 ---| "onEnter"
 ---| "onLeave"
+---| "draw"
 
----@param settings ComponentSettings
-function Component:new(settings)
+local EMPTY = {}
+
+---@param settings? ComponentSettings
+return function(settings)
     settings = settings or EMPTY
-    self.x = settings.x or 0
-    self.y = settings.y or 0
-    self.width = settings.width or getWidth()
-    self.height = settings.height or getHeight()
-    self.rotation = settings.rotation or 0
-    self.events = settings.events or {}
-    self.hovered = false
-    self.clicked = false
-    self.mouseListener = settings.mouseListener or 1
-end
 
----Capture onClick, onRelease, onEnter and onLeave events.
-function Component:capture()
-    if IS_IN_MOBILE_DEVICE then
-    else
-        local mouseX, mouseY = getPosition()
-        local hovered = getPointInsideOf(self.x, self.y, self.width, self.height, mouseX, mouseY)
-        local clicked = hovered and isDown(self.mouseListener)
-        if hovered then
-            if not self.hovered then
-                self:execute('onEnter')
-                self.hovered = true
-            end
+    if settings.enabled == nil then settings.enabled = true end
+    if settings.display == nil then settings.display = true end
+
+    ---@class Component
+    local Component = {}
+
+    Component.parent = settings.parent
+    Component.x = settings.x or 0
+    Component.y = settings.y or 0
+    Component.width = settings.width or getWidth()
+    Component.height = settings.height or getHeight()
+    Component.rotation = settings.rotation or 0
+    Component.events = settings.events or {}
+    Component.hovered = false
+    Component.clicked = false
+    Component.mouseListener = settings.mouseListener or 1
+    Component.enabled = settings.enabled
+    Component.display = settings.display
+
+    ---Captures onClick, onRelease, onEnter and onLeave events.
+    ---This function is going to return immediately if `Component.enabled` is equal to `false`.
+    function Component:capture()
+        if not self.enabled then return end
+        if IS_IN_MOBILE_DEVICE then
+            -- TODO: Add mobile touch input.
         else
-            if self.hovered then
-                self:execute('onLeave')
-                self.hovered = false
+            local mouseX, mouseY = getPosition()
+            local hovered = getPointInsideOf(self.x, self.y, self.width, self.height, mouseX, mouseY)
+            local clicked = hovered and isDown(self.mouseListener)
+            if hovered then
+                if not self.hovered then
+                    self:execute('onEnter')
+                    self.hovered = true
+                end
+            else
+                if self.hovered then
+                    self:execute('onLeave')
+                    self.hovered = false
+                end
             end
-        end
-        if clicked then
-            if not self.clicked then
-                self:execute('onClick')
-                self.clicked = true
-            end
-        else
-            if self.clicked then
-                self:execute('onRelease')
-                self.clicked = false
+            if clicked then
+                if not self.clicked then
+                    self:execute('onClick')
+                    self.clicked = true
+                end
+            else
+                if self.clicked then
+                    self:execute('onRelease')
+                    self.clicked = false
+                end
             end
         end
     end
-end
 
----Adds an event listener to this Component.
----@param eventName ComponentEventName
----@param callback fun(self): any
-function Component:addEventListener(eventName, callback)
-    if not self.events[eventName] then
-        self.events[eventName] = {}
-    end
-    self.events[eventName][#self.events[eventName] + 1] = callback
-end
-
----Executes the given event with the given arguments.
----@param eventName ComponentEventName
----@param ... any
-function Component:execute(eventName, ...)
-    if self.events[eventName] then
-        for index = 1, #self.events[eventName] do
-            local event = self.events[eventName][index]
-            event(self, ...)
+    ---Executes the `draw` event queue if `Component.display` is equal to `true`.
+    function Component:draw()
+        if self.display then
+            self:execute('draw')
         end
     end
-end
 
-return Component
+    ---Adds an callback to the `eventName` event queue of this Component.
+    ---You can add more than one callback to your event queue.
+    ---They will be executed in the order you added them when you call `Component:execute()`
+    ---@param eventName ComponentEventName
+    ---@param callback fun(self, ...: any): any
+    function Component:addEventListener(eventName, callback)
+        if not self.events[eventName] then
+            self.events[eventName] = {}
+        end
+        self.events[eventName][#self.events[eventName] + 1] = callback
+    end
+
+    ---Executes every callback in the `eventName` event queue of this Component.
+    ---If the event queue doesn't exists no error is propagated.
+    ---@param eventName ComponentEventName The name of the event queue.
+    ---@param ... any Arguments to give for each callback.
+    function Component:execute(eventName, ...)
+        if self.events[eventName] then
+            for index = 1, #self.events[eventName] do
+                local event = self.events[eventName][index]
+                event(self, ...)
+            end
+        end
+    end
+
+    return Component
+end
