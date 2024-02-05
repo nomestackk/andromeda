@@ -65,8 +65,8 @@ return function(settings)
     ---position. If the alignment method is equal to 'size' it will align only the size.
     function Container:align()
         if self.alignmentMethod == 'position+size' then
-            self:alignPosition()
             self:alignSize()
+            self:alignPosition()
         elseif self.alignmentMethod == 'position' then
             self:alignPosition()
         elseif self.alignmentMethod == 'size' then
@@ -81,7 +81,9 @@ return function(settings)
     end
 
     ---Adds `component` to the list of children of this Component and calls `Container:align()` after.
-    ---@param component Component
+    ---@generic T: Component
+    ---@param component T
+    ---@return T component
     function Container:add(component)
         self.children[#self.children + 1] = component
         self:align()
@@ -89,7 +91,9 @@ return function(settings)
     end
 
     ---Adds `component` to the list of children of this Component but doesn't call `Container:align()`.
-    ---@param component any
+    ---@generic T: Component
+    ---@param component T
+    ---@return T component
     function Container:addImmutable(component)
         self.children[#self.children + 1] = component
         return component
