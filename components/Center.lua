@@ -1,14 +1,16 @@
 local Container = require "components/Container"
+local EMPTY = {}
 
 ---This container automatically aligns its children at the center of its box.
 ---The `alignmentMethod` is always set to 'position' when its created.
----@param settings ContainerSettings
+---@param settings? ContainerSettings
 ---@return Center center
 return function(settings)
+  settings = settings or EMPTY
   settings.alignmentMethod = 'position'
 
   ---@class Center: Container
-  local Center = Container(settings)
+  local Center = Container(settings, "Center")
 
   function Center:alignPosition()
     local x = self.x + self.width / 2

@@ -1,11 +1,11 @@
 local Container = require "components/Container"
 
 ---Creates a VDiv.
----HDiv extends from `Container` and aligns its children horizontally.
+---VDiv extends from `Container` and aligns its children vertically.
 ---@param settings? ContainerSettings
 return function(settings)
     ---@class VDiv: Container
-    local VDiv = Container(settings)
+    local VDiv = Container(settings, "VDiv")
 
     function VDiv:alignPosition()
         local y = self.y
@@ -13,7 +13,7 @@ return function(settings)
             local child = self.children[i]
             child.x = self.x
             child.y = y
-            y = y + child.height
+            y = y + child.height + self.gap
         end
     end
 

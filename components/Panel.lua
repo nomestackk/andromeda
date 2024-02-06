@@ -5,7 +5,7 @@ local Stylebox  = require "components/Stylebox"
 ---@field stylebox? Stylebox
 
 ---Creates a Panel.
----Panels are **Components** that renders a Stylebox before drawing its children.
+---Panels is a **Container** that renders a Stylebox before drawing its children.
 ---`root` must be a **Container** that will be used for alignment and cant be nil.
 ---@param settings PanelSettings
 ---@return Panel panel
@@ -13,15 +13,19 @@ local Stylebox  = require "components/Stylebox"
 ---@see Container
 ---@see Stylebox
 return function(settings)
-  ---@class Panel: Component
-  local Panel = Component({})
+  ---@class Panel: Container
+  local Panel = settings.root
+  Panel.name = "Panel"
+  Panel.branch = "panel"
 
-  Panel.root = settings.root ---@type Container
-  Panel.stylebox = settings.stylebox or Stylebox({})
+  local style = Panel:getStyle()
+
+  Panel.stylebox = settings.stylebox or Stylebox(style.stylebox)
 
   Panel:addEventListener("draw", function(self)
+    print("Panel draw event")
     ---@cast self Panel
-    self.root:call('draw')
+    self.stylebox:draw(self.x, self.y, self.width, self.height)
   end)
   return Panel
 end

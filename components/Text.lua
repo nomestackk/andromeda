@@ -1,5 +1,5 @@
 local Component = require "components/Component"
-local TextStyle = require "TextStyle"
+local TextStyle = require "components/TextStyle"
 
 ---@class TextSettings: ComponentSettings
 ---@field text? string
@@ -10,13 +10,19 @@ local EMPTY = {}
 ---Creates a new Text.
 ---Text is a component that can only draw a `TextStyle`.
 ---Supports events just like any class that inherits from `Component`.
----@param settings? TextSettings
+---@param settings? TextSettings|string
 ---@return Text text
 return function(settings)
   settings = settings or EMPTY
 
+  if type(settings) == "string" then
+    settings = { text = settings }
+  end
+
+  settings.branch = "text"
+
   ---@class Text: Component
-  local Text = Component(settings)
+  local Text = Component(settings, "Text")
 
   local style = Text:getStyle()
 

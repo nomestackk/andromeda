@@ -5,7 +5,7 @@ local Container = require "components/Container"
 ---@param settings? ContainerSettings
 return function(settings)
     ---@class HDiv: Container
-    local HDiv = Container(settings)
+    local HDiv = Container(settings, "HDiv")
 
     function HDiv:alignPosition()
         local x = self.x
@@ -13,7 +13,7 @@ return function(settings)
             local child = self.children[i]
             child.x = x
             child.y = self.y
-            x = x + child.width
+            x = x + child.width + self.gap
         end
     end
 

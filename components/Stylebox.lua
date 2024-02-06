@@ -1,15 +1,24 @@
 ---@class StyleboxSettings
----@field color? color
----@field shrink? integer
----@field border? integer
----@field borderColor? color
----@field radius? integer
+---@field color? color The background color of the stylebox.
+---@field shrink? integer Shrinks the size of the stylebox.
+---@field border? integer Border width of the stylebox
+---@field borderColor? color Border color of the stylebox.
+---@field radius? integer Corner radius of the stylebox.
 
 local EMPTY = {}
 local WHITE = { 1, 1, 1, 1 }
 
----@param settings StyleboxSettings
----@return Stylebox stylebox
+local push = love.graphics.push
+local pop = love.graphics.pop
+local setColor = love.graphics.setColor
+local rectangle = love.graphics.rectangle
+local translate = love.graphics.translate
+local rotate = love.graphics.rotate
+local setLineWidth = love.graphics.setLineWidth
+
+---Abstract base class for defining stylized boxes for UI elements.
+---@param settings? StyleboxSettings Settings for the Stylebox.
+---@return Stylebox stylebox The new Stylebox.
 return function(settings)
     settings = settings or EMPTY
 
@@ -38,17 +47,17 @@ return function(settings)
         rotation = rotation or 0
         ox = ox or width / 2
         oy = oy or height / 2
-        love.graphics.push()
-        love.graphics.translate(x + ox, y + oy)
-        love.graphics.rotate(-rotation)
-        love.graphics.setColor(self.color)
-        love.graphics.rectangle("fill", -ox, -oy, width, height, self.radius, self.radius)
+        push()
+        translate(x + ox, y + oy)
+        rotate(-rotation)
+        setColor(self.color)
+        rectangle("fill", -ox, -oy, width, height, self.radius, self.radius)
         if self.border > 0 then
-            love.graphics.setColor(self.borderColor)
-            love.graphics.setLineWidth(self.border)
-            love.graphics.rectangle("line", -ox, -oy, width, height, self.radius, self.radius)
+            setColor(self.borderColor)
+            setLineWidth(self.border)
+            rectangle("line", -ox, -oy, width, height, self.radius, self.radius)
         end
-        love.graphics.pop()
+        pop()
     end
 
     return Stylebox

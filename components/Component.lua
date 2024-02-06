@@ -18,6 +18,7 @@ local function getPointInsideOf(x, y, width, height, pointX, pointY)
 end
 
 ---@class ComponentSettings
+---@field name? string
 ---@field x? number
 ---@field y? number
 ---@field width? number
@@ -42,7 +43,8 @@ end
 local EMPTY = {}
 
 ---@param settings? ComponentSettings
-return function(settings)
+---@param name? string
+return function(settings, name)
     settings = settings or EMPTY
 
     if settings.enabled == nil then settings.enabled = true end
@@ -52,6 +54,7 @@ return function(settings)
     ---@field parent Container?
     local Component = {}
 
+    Component.name = name or settings.name or "BaseComponent"
     Component.parent = settings.parent
     Component.x = settings.x or 0
     Component.y = settings.y or 0
@@ -74,9 +77,12 @@ return function(settings)
     ---@return table variant
     function Component:getStyle()
         local theme = self.theme or GlobalTheme
-        if not theme then error("Theme is undefined") end
-        if not self.branch then error("Theme branch is undefined") end
-        if not theme[self.branch] then error("Branch doesnt exists in the current theme") end
+        if not theme then error("Theme is undefined (nil)") end
+        if not self.branch then error("Theme branch is undefined (nil)") end
+        if not theme[self.branch] then
+            error("Branch does not exists in the current theme (branch: \"" ..
+                tostring(self.branch) .. "\")")
+        end
         local variant = self.variant or theme[self.branch].defaultVariant
         if not theme[self.branch].variant[variant] then error("Variant doesnt exists in current branch") end
         return theme[self.branch].variant[variant]
@@ -117,14 +123,29 @@ return function(settings)
         end
     end
 
+    ---@param other Container
+    function Component:moveBelow(other)
+        self.y = other.y + other.height
+    end
+
+    function Component:setAvailableHeight()
+        local total = 0
+        for i = 1, #self.parent.children do
+            local c = self.parent.children[i]
+            total = total + c.height
+        end
+        self.height = total
+    end
+
     ---Executes the `draw` event queue if `Component.display` is equal to `true`.
     function Component:draw()
         if self.display then
             self:execute('draw')
+            self:capture()
         end
     end
 
-    ---Adds an callback to the `eventName` event queue of this Component.
+    ---Adds an callback to the specified event queue for this Component.
     ---You can add more than one callback to your event queue.
     ---They will be executed in the order you added them when you call `Component:execute()`
     ---@param eventName ComponentEventName
@@ -149,5 +170,9 @@ return function(settings)
         end
     end
 
-    return Component
+    return setmetatable(Component, {
+        __tostring = function(self)
+            return "<" .. self.name .. " />"
+        end
+    })
 end

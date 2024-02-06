@@ -4,20 +4,17 @@ local Button = require "components/Button"
 
 return function()
     ---@class AppStartMenu: Page
-    local AppStartMenu = Page({ root = HDiv() })
+    local AppStartMenu = Page(HDiv())
 
-    AppStartMenu.playButton = AppStartMenu.root:addImmutable(Button({
-        text = "Play",
-    }))
-    AppStartMenu.buildButton = AppStartMenu.root:addImmutable(Button({
-        text = "Build",
-    }))
+    local play = Button('Play')
+    local build = Button('Build')
 
-    AppStartMenu.buildButton:addEventListener("onClick", function(self)
+    build:addEventListener("onClick", function()
         GlobalPageManager:enter(GlobalPages.AppProjectManager)
     end)
 
-    AppStartMenu.root:align()
+    AppStartMenu = AppStartMenu + play
+    AppStartMenu = AppStartMenu + build
 
     return AppStartMenu
 end

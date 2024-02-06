@@ -12,13 +12,18 @@ local EMPTY     = {}
 ---Creates a new Button.
 ---A button is just a combination of a Stylebox and a TextStyle.
 ---Every other event is inherited from Component.
----@param settings? ButtonSettings A table containing the settings of the Button. This argument can be nil.
+---@param settings? ButtonSettings|string A table containing the settings of the Button. This argument can be nil.
 return function(settings)
     settings = settings or EMPTY
+
+    if type(settings) == "string" then
+        settings = { text = settings }
+    end
+
     settings.branch = "button"
 
     ---@class Button: Component
-    local Button = Component(settings)
+    local Button = Component(settings, "Button")
 
     local style = Button:getStyle()
 

@@ -1,9 +1,10 @@
-local AppProjectManager = require "pages/AppProjectManager"
 function love.load()
     require 'save'
+    print("\n")
 
     AndromedaInitialize()
 
+    local AppProjectManager = require "pages/AppProjectManager"
     local AppStartMenu = require 'pages/AppStartMenu'
     local roomy = require 'libraries/roomy'
 
