@@ -5,9 +5,8 @@ function love.load()
 
     local AppStartMenu = require 'pages/AppStartMenu'
     local roomy = require 'libraries/roomy'
-    local Theme = require 'components/Theme'
 
-    require 'app/themes/Andromeda'
+    GlobalTheme = require('app/themes/' .. AppSettings.theme)
 
     GlobalPages = {
         AppStartMenu = AppStartMenu()

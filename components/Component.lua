@@ -28,8 +28,9 @@ end
 ---@field parent? Container This component may have a Container as its parent. If it has this field represents the parent.
 ---@field display? boolean Determines whether this component is going to be rendered or not.
 ---@field enabled? boolean Determines whether this component is going to execute other events (except 'draw').
----@field themeVariant? string Determines which variant should this component use.
----@field themeTree? string Determines which tree should this component use from the theme.
+---@field variant? string Determines which variant of the current branch should this component use.
+---@field branch? string Determines which branch of the theme this component is going to use.
+---@field theme? Theme Determines which theme this component is going to use.
 
 ---@alias ComponentEventName
 ---| "onClick"
@@ -62,22 +63,19 @@ return function(settings)
     Component.mouseListener = settings.mouseListener or 1
     Component.enabled = settings.enabled
     Component.display = settings.display
-    Component.themeTree = settings.themeTree or ""
-    Component.themeVariant = settings.themeVariant or ""
+    Component.variant = settings.variant
+    Component.branch = settings.branch
+    Component.theme = settings.theme
 
-    ---Sets the default variant of the theme tree.
-    function Component:setDefaultVariant()
-        self.themeVariant = Theme.get()[Component.themeTree].Default
-    end
-
-    ---Gets a Style from the current theme.
-    ---@param tree? string
-    ---@param variant? string
-    ---@return table
-    function Component:getStyle(tree, variant)
-        tree = tree or self.themeTree
-        variant = variant or self.themeVariant
-        return Theme.get()[tree].Variant[variant]
+    ---Searches for `self.theme[self.branch].variant[self.variant]` and returns the value, if it is found.
+    ---@return unknown
+    function Component:getStyle()
+        if not self.theme then error("Theme is undefined") end
+        if not self.branch then error("Theme branch is undefined") end
+        if not self.theme[self.branch] then error("Branch doesnt exists in the current theme") end
+        local variant = self.variant or self.theme[self.branch].defaultVariant
+        if not self.theme[self.branch].variant[variant] then error("Variant doesnt exists in current branch") end
+        return self.theme[self.branch].variant[variant]
     end
 
     ---Captures onClick, onRelease, onEnter and onLeave events.

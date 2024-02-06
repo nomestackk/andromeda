@@ -4,7 +4,8 @@ local ProjectsFolderPath = 'projects/'
 
 function AndromedaNewSave()
     AppSettings = {
-        uiScale = 1
+        uiScale = 1,
+        theme = "Bootstrap"
     }
     love.filesystem.createDirectory(ProjectsFolderPath)
 end

@@ -7,7 +7,7 @@ return function()
     local AppStartMenu = Page({ root = HDiv() })
 
     AppStartMenu.playButton = AppStartMenu.root:addImmutable(Button({
-        text = "Play"
+        text = "Play",
     }))
     AppStartMenu.buildButton = AppStartMenu.root:addImmutable(Button({
         text = "Build"

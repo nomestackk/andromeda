@@ -15,16 +15,17 @@ local EMPTY     = {}
 ---@param settings? ButtonSettings A table containing the settings of the Button. This argument can be nil.
 return function(settings)
     settings = settings or EMPTY
-    settings.themeTree = "Button"
+    settings.theme = GlobalTheme
+    settings.branch = "button"
 
     ---@class Button: Component
     local Button = Component(settings)
 
-    Button:setDefaultVariant()
+    local style = Button:getStyle()
 
     Button.text = settings.text or "Undefined"
-    Button.stylebox = settings.stylebox or Stylebox(Button:getStyle().StyleBox)
-    Button.textstyle = settings.textstyle or TextStyle(Button:getStyle().TextStyle)
+    Button.stylebox = settings.stylebox or Stylebox(style.stylebox)
+    Button.textstyle = settings.textstyle or TextStyle(style.textstyle)
 
     Button:addEventListener("draw", function(self, ...)
         self:capture()

@@ -10,11 +10,11 @@ local TextStyle = Object:extend()
 local EMPTY = {}
 
 ---@class TextStyleSettings
----@field font love.Font
----@field color color
----@field decoration "none"|"underline"|"line-through"|"overline"
----@field halign love.AlignMode
----@field valign "top"|"middle"|"bottom"
+---@field font? love.Font
+---@field color? color
+---@field decoration? "none"|"underline"|"line-through"|"overline"
+---@field halign? love.AlignMode
+---@field valign? "top"|"middle"|"bottom"
 
 ---@param settings? TextStyleSettings
 function TextStyle:new(settings)

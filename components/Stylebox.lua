@@ -5,11 +5,11 @@ local Object = require 'libraries/classic'
 local Stylebox = Object:extend()
 
 ---@class StyleboxSettings
----@field color color
----@field shrink integer
----@field border integer
----@field borderColor color
----@field radius integer
+---@field color? color
+---@field shrink? integer
+---@field border? integer
+---@field borderColor? color
+---@field radius? integer
 
 local EMPTY = {}
 local WHITE = { 1, 1, 1, 1 }
