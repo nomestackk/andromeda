@@ -3,29 +3,40 @@ local rgb = require 'app/utils/rgb'
 
 ---@type ThemeSettings
 ---@diagnostic disable-next-line
-local Boostrap = {}
-Boostrap.name = "Bootstrap"
-Boostrap.author = "nomestack"
-Boostrap.color = {
+local Bootstrap = {}
+Bootstrap.name = "Bootstrap"
+Bootstrap.author = "nomestack"
+Bootstrap.color = {
   white = rgb(245, 245, 245),
   black = rgb(10, 10, 10)
 }
-Boostrap.font = {
+Bootstrap.font = {
   default = love.graphics.newFont(14)
 }
-Boostrap.font.default:setFilter("nearest", "nearest")
-Boostrap.button = {
+Bootstrap.font.default:setFilter("nearest", "nearest")
+Bootstrap.text = {
+  defaultVariant = "light",
+  variant = {
+    light = {
+      textstyle = {
+        font = Bootstrap.font.default,
+        color = Bootstrap.color.black
+      }
+    }
+  }
+}
+Bootstrap.button = {
   defaultVariant = "dark",
   variant = {
     light = {
-      stylebox = { shrink = 4, radius = 4, color = Boostrap.color.white },
-      textstyle = { font = Boostrap.font.default, color = Boostrap.color.black }
+      stylebox = { shrink = 4, radius = 4, color = Bootstrap.color.white },
+      textstyle = { font = Bootstrap.font.default, color = Bootstrap.color.black }
     },
     dark = {
-      stylebox = { shrink = 4, radius = 4, color = Boostrap.color.black },
-      textstyle = { font = Boostrap.font.default, color = Boostrap.color.white }
+      stylebox = { shrink = 4, radius = 4, color = Bootstrap.color.black },
+      textstyle = { font = Bootstrap.font.default, color = Bootstrap.color.white }
     }
   }
 }
 
-return Theme(Boostrap)
+return Theme(Bootstrap)

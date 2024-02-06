@@ -1,3 +1,4 @@
+local AppProjectManager = require "pages/AppProjectManager"
 function love.load()
     require 'save'
 
@@ -9,7 +10,8 @@ function love.load()
     GlobalTheme = require('app/themes/' .. AppSettings.theme)
 
     GlobalPages = {
-        AppStartMenu = AppStartMenu()
+        AppStartMenu = AppStartMenu(),
+        AppProjectManager = AppProjectManager()
     }
 
     GlobalPageManager = roomy.new()

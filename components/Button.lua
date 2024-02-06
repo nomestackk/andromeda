@@ -15,7 +15,6 @@ local EMPTY     = {}
 ---@param settings? ButtonSettings A table containing the settings of the Button. This argument can be nil.
 return function(settings)
     settings = settings or EMPTY
-    settings.theme = GlobalTheme
     settings.branch = "button"
 
     ---@class Button: Component

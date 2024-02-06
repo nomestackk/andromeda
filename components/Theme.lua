@@ -6,10 +6,14 @@ local rgb = require "app.utils.rgb"
 ---@field color table<string, color>
 ---@field font table<string, love.Font>
 ---@field button ThemeStyleButton
+---@field text ThemeStyleText
 
 ---@class ThemeStyle
 ---@field defaultVariant string
 ---@field variant table<string, table>
+
+---@class ThemeStyleText: ThemeStyle
+---@field variant table<string, { stylebox: StyleboxSettings }>
 
 ---@class ThemeStyleButton: ThemeStyle
 ---@field variant table<string, { stylebox: StyleboxSettings, textstyle: TextStyleSettings }>

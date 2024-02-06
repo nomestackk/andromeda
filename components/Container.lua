@@ -23,7 +23,7 @@ return function(settings)
     Container.alignOnMutation = settings.alignOnMutation
     Container.alignmentMethod = settings.alignmentMethod or 'position+size'
     Container.gap = settings.gap or 0
-    Container.children = settings.children or {} ---@type Component[]
+    Container.children = settings.children or {} ---@type Component|Container[]
 
     ---This function is designed to mutate the position of every child of this Container.
     ---This function will only be called if `Component.alignmentMethod` is equal to 'position+size' or 'position'.
@@ -81,11 +81,12 @@ return function(settings)
     end
 
     ---Adds `component` to the list of children of this Component and calls `Container:align()` after.
-    ---@generic T: Component
+    ---@generic T
     ---@param component T
     ---@return T component
     function Container:add(component)
         self.children[#self.children + 1] = component
+        component.parent = self ---@diagnostic disable-line
         self:align()
         return component
     end
@@ -96,6 +97,7 @@ return function(settings)
     ---@return T component
     function Container:addImmutable(component)
         self.children[#self.children + 1] = component
+        component.parent = self ---@diagnostic disable-line
         return component
     end
 

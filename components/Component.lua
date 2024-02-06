@@ -25,7 +25,7 @@ end
 ---@field rotation? integer
 ---@field events? table<ComponentEventName, function[]> Represents a queue list of callbacks.
 ---@field mouseListener? 1|2|3 Determines which mouse button will be heard when clicks are calculated.
----@field parent? Container This component may have a Container as its parent. If it has this field represents the parent.
+---@field parent? Container Components may have a Container as its parent. If it has this field represents the parent.
 ---@field display? boolean Determines whether this component is going to be rendered or not.
 ---@field enabled? boolean Determines whether this component is going to execute other events (except 'draw').
 ---@field variant? string Determines which variant of the current branch should this component use.
@@ -49,6 +49,7 @@ return function(settings)
     if settings.display == nil then settings.display = true end
 
     ---@class Component
+    ---@field parent Container?
     local Component = {}
 
     Component.parent = settings.parent
@@ -68,14 +69,17 @@ return function(settings)
     Component.theme = settings.theme
 
     ---Searches for `self.theme[self.branch].variant[self.variant]` and returns the value, if it is found.
-    ---@return unknown
+    ---If `self.theme` is nil then `GlobalTheme` is used instead.
+    ---If `self.variant` is nil then the default variant is used.
+    ---@return table variant
     function Component:getStyle()
-        if not self.theme then error("Theme is undefined") end
+        local theme = self.theme or GlobalTheme
+        if not theme then error("Theme is undefined") end
         if not self.branch then error("Theme branch is undefined") end
-        if not self.theme[self.branch] then error("Branch doesnt exists in the current theme") end
-        local variant = self.variant or self.theme[self.branch].defaultVariant
-        if not self.theme[self.branch].variant[variant] then error("Variant doesnt exists in current branch") end
-        return self.theme[self.branch].variant[variant]
+        if not theme[self.branch] then error("Branch doesnt exists in the current theme") end
+        local variant = self.variant or theme[self.branch].defaultVariant
+        if not theme[self.branch].variant[variant] then error("Variant doesnt exists in current branch") end
+        return theme[self.branch].variant[variant]
     end
 
     ---Captures onClick, onRelease, onEnter and onLeave events.

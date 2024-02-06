@@ -10,8 +10,13 @@ return function()
         text = "Play",
     }))
     AppStartMenu.buildButton = AppStartMenu.root:addImmutable(Button({
-        text = "Build"
+        text = "Build",
     }))
+
+    AppStartMenu.buildButton:addEventListener("onClick", function(self)
+        GlobalPageManager:enter(GlobalPages.AppProjectManager)
+    end)
+
     AppStartMenu.root:align()
 
     return AppStartMenu
