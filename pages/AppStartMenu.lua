@@ -13,8 +13,9 @@ return function()
         GlobalPageManager:enter(GlobalPages.AppProjectManager)
     end)
 
-    AppStartMenu = AppStartMenu + play
-    AppStartMenu = AppStartMenu + build
+    AppStartMenu:addImmutable(play)
+    AppStartMenu:addImmutable(build)
+    AppStartMenu:align()
 
     return AppStartMenu
 end
