@@ -6,7 +6,7 @@ local getPosition = love.mouse.getPosition
 local Stylebox = require 'components/Stylebox'
 local TextStyle = require 'components/TextStyle'
 
-local IS_IN_MOBILE_DEVICE = getOS() == "Android" or getOS() == "iOS"
+local IS_IN_MOBILE_DEVICE = getOS() == 'Android' or getOS() == 'iOS'
 
 ---@param x number
 ---@param y number
@@ -33,21 +33,23 @@ end
 ---@field variant? string Determines which variant of the current branch should this component use.
 ---@field branch? string Determines which branch of the theme this component is going to use.
 ---@field theme? Theme Determines which theme this component is going to use.
+---@field antiAlign? boolean
 
 ---@alias ComponentEventName
----| "onClick"
----| "onRelease"
----| "onEnter"
----| "onLeave"
----| "draw"
+---| string
+---| 'onClick'
+---| 'onRelease'
+---| 'onEnter'
+---| 'onLeave'
+---| 'draw'
 
 local EMPTY = {}
 local DebugTransparentColor = { 0.05, 1, 0.2, 0.5 }
 local DebugSolidColor = { 0.05, 1, 0.2, 1 }
 local DebugTextStyle = TextStyle {
     color = DebugSolidColor,
-    halign = "left",
-    valign = "top"
+    halign = 'left',
+    valign = 'top'
 }
 local DebugStylebox = Stylebox {
     color = DebugTransparentColor,
@@ -62,13 +64,15 @@ return function(settings, name)
 
     if settings.enabled == nil then settings.enabled = true end
     if settings.display == nil then settings.display = true end
+    if settings.antiAlign == nil then settings.antiAlign = false end
 
     ---@class Component
     ---@field parent Container?
     local Component = {}
 
+    Component.antiAlign = settings.antiAlign
     Component.debug = false
-    Component.name = name or settings.name or "BaseComponent"
+    Component.name = name or settings.name or 'BaseComponent'
     Component.parent = settings.parent
     Component.x = settings.x or 0
     Component.y = settings.y or 0
@@ -93,9 +97,9 @@ return function(settings, name)
             return
         end
         local s = tostring
-        local info = "<" ..
+        local info = '<' ..
             self.name ..
-            " /> (" .. s(self.x) .. ", " .. s(self.y) .. ", " .. s(self.width) .. ", " .. s(self.height) .. ")"
+            ' /> (' .. s(self.x) .. ', ' .. s(self.y) .. ', ' .. s(self.width) .. ', ' .. s(self.height) .. ')'
         DebugStylebox:draw(self.x, self.y, self.width, self.height)
         DebugTextStyle:draw(info, self.x + 8, self.y + 8, self.width - 16, self.height - 16)
     end
@@ -106,14 +110,14 @@ return function(settings, name)
     ---@return table variant
     function Component:getStyle()
         local theme = self.theme or GlobalTheme
-        if not theme then error("Theme is undefined (nil)") end
-        if not self.branch then error("Theme branch is undefined (nil)") end
+        if not theme then error('Theme is undefined (nil)') end
+        if not self.branch then error('Theme branch is undefined (nil)') end
         if not theme[self.branch] then
-            error("Branch does not exists in the current theme (branch: \"" ..
-                tostring(self.branch) .. "\")")
+            error('Branch does not exists in the current theme (branch: \'' ..
+                tostring(self.branch) .. '\')')
         end
         local variant = self.variant or theme[self.branch].defaultVariant
-        if not theme[self.branch].variant[variant] then error("Variant doesnt exists in current branch") end
+        if not theme[self.branch].variant[variant] then error('Variant doesnt exists in current branch') end
         return theme[self.branch].variant[variant]
     end
 
@@ -203,7 +207,7 @@ return function(settings, name)
 
     return setmetatable(Component, {
         __tostring = function(self)
-            return "<" .. self.name .. " />"
+            return '<' .. self.name .. ' />'
         end
     })
 end

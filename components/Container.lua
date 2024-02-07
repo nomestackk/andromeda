@@ -180,6 +180,7 @@ return function(settings, name)
     end
 
     mt.__len = function(self)
+        print("len meta")
         return #self.children
     end
 

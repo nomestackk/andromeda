@@ -3,7 +3,9 @@ local Button            = require 'components/Button'
 local VDiv              = require 'components/VDiv'
 local HDiv              = require 'components/HDiv'
 local ProjectComponent  = require 'components/AppProjectManager/ProjectComponent'
+local Center            = require 'components/Center'
 local Project           = require 'components/Andromeda/Project'
+local ConfirmModal      = require 'components/Modals/ConfirmModal'
 
 local getDirectoryItems = love.filesystem.getDirectoryItems
 local read              = love.filesystem.read
@@ -36,6 +38,19 @@ return function()
   AppProjectManager:addImmutable(list)
   list:setAvailableHeight()
 
+  -- Center
+
+  local center = Center()
+  local confirm = ConfirmModal {
+    title = "Are you sure that you want to delete this project?",
+    yes = function()
+
+    end,
+    no = function()
+
+    end
+  }
+
   -- AppProjectManager
 
   function AppProjectManager.render()
@@ -44,16 +59,21 @@ return function()
       local data = 'projects/' .. value .. '/data.lua'
       local content = read(data)
       local projectdata = loadstring(content)()
-      return ProjectComponent(projectdata)
+      local component = ProjectComponent(projectdata)
+      component:addEventListener('project:delete', function()
+        Project.delete(value)
+        AppProjectManager.render()
+      end)
+      component:addEventListener('project:rename', function()
+        -- TODO
+      end)
+      return component
     end)
   end
 
   function AppProjectManager:enter()
     AppProjectManager.render()
   end
-
-  controlbar.debug = true
-  list.debug = true
 
   AppProjectManager:align()
 

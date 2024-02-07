@@ -11,9 +11,11 @@ return function(settings)
         local y = self.y
         for i = 1, #self.children do
             local child = self.children[i]
-            child.x = self.x
-            child.y = y
-            y = y + child.height + self.gap
+            if not child.antiAlign then
+                child.x = self.x
+                child.y = y
+                y = y + child.height + self.gap
+            end
         end
     end
 
@@ -21,8 +23,10 @@ return function(settings)
         local height = self.height / #self.children
         for i = 1, #self.children do
             local child = self.children[i]
-            child.height = height
-            child.width = self.width
+            if not child.antiAlign then
+                child.height = height
+                child.width = self.width
+            end
         end
     end
 
