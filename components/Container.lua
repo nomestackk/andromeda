@@ -145,21 +145,24 @@ return function(settings, name)
             if child.call then ---@diagnostic disable-line
                 -- print("Calling: " .. functionName .. " in: " .. tostring(child) .. " (container)")
                 child:call(functionName, ...) ---@diagnostic disable-line
-            else
-                -- print("Calling: " .. functionName .. " in: " .. tostring(child) .. " (component)")
-                if child[functionName] then
-                    child[functionName](child, ...)
-                end
+            end
+            -- print("Calling: " .. functionName .. " in: " .. tostring(child) .. " (component)")
+            if child[functionName] then
+                child[functionName](child, ...)
             end
         end
     end
 
     ---Executes the `draw` event queue if `Component.display` is equal to `true`.
     function Container:draw()
+        if self.enabled then
+            self:capture()
+        end
         if self.display then
             self:execute('draw')
             self:call('draw')
         end
+        self:drawDebugInformation()
     end
 
     -- TODO: Make this more efficient

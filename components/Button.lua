@@ -32,7 +32,6 @@ return function(settings)
     Button.textstyle = settings.textstyle or TextStyle(style.textstyle)
 
     Button:addEventListener("draw", function(self, ...)
-        self:capture()
         self.stylebox:draw(self.x, self.y, self.width, self.height)
         self.textstyle:draw(self.text, self.x, self.y, self.width, self.height)
     end)

@@ -1,8 +1,12 @@
-local Page             = require "components/Page"
-local Button           = require "components/Button"
-local VDiv             = require "components/VDiv"
-local HDiv             = require "components/HDiv"
-local ProjectComponent = require "components/AppProjectManager/ProjectComponent"
+local Page              = require 'components/Page'
+local Button            = require 'components/Button'
+local VDiv              = require 'components/VDiv'
+local HDiv              = require 'components/HDiv'
+local ProjectComponent  = require 'components/AppProjectManager/ProjectComponent'
+local Project           = require 'components/Andromeda/Project'
+
+local getDirectoryItems = love.filesystem.getDirectoryItems
+local read              = love.filesystem.read
 
 return function()
   ---@class AppProjectManager: Page
@@ -12,15 +16,17 @@ return function()
 
   local controlbar = HDiv { height = 50 }
 
-  local back = Button('<<<')
-  local create = Button('Create')
-  local rename = Button('Rename')
-  local delete = Button('Delete')
+  local back = Button '<<<'
+  back:addEventListener('onClick', function() GlobalPageManager:enter(GlobalPages.AppStartMenu) end)
+
+  local create = Button { text = 'Create', variant = 'light' }
+  create:addEventListener('onRelease', function()
+    Project.create()
+    AppProjectManager.render()
+  end)
 
   controlbar:addImmutable(back)
   controlbar:addImmutable(create)
-  controlbar:addImmutable(rename)
-  controlbar:addImmutable(delete)
 
   AppProjectManager:addImmutable(controlbar)
 
@@ -30,23 +36,24 @@ return function()
   AppProjectManager:addImmutable(list)
   list:setAvailableHeight()
 
-  -- Functions
+  -- AppProjectManager
 
-  local function render()
+  function AppProjectManager.render()
     list:clear()
-    list:map(love.filesystem.getDirectoryItems("projects"), function(value)
-      local data = value .. '/data.lua'
-      local content = love.filesystem.read(data)
+    list:map(getDirectoryItems 'projects', function(value)
+      local data = 'projects/' .. value .. '/data.lua'
+      local content = read(data)
       local projectdata = loadstring(content)()
       return ProjectComponent(projectdata)
     end)
   end
 
-  -- AppProjectManager
-
   function AppProjectManager:enter()
-    render()
+    AppProjectManager.render()
   end
+
+  controlbar.debug = true
+  list.debug = true
 
   AppProjectManager:align()
 

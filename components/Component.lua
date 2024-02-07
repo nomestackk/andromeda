@@ -1,9 +1,10 @@
-local Theme = require "components/Theme"
 local getWidth = love.graphics.getWidth
 local getHeight = love.graphics.getHeight
 local getOS = love.system.getOS
 local isDown = love.mouse.isDown
 local getPosition = love.mouse.getPosition
+local Stylebox = require 'components/Stylebox'
+local TextStyle = require 'components/TextStyle'
 
 local IS_IN_MOBILE_DEVICE = getOS() == "Android" or getOS() == "iOS"
 
@@ -41,6 +42,18 @@ end
 ---| "draw"
 
 local EMPTY = {}
+local DebugTransparentColor = { 0.05, 1, 0.2, 0.5 }
+local DebugSolidColor = { 0.05, 1, 0.2, 1 }
+local DebugTextStyle = TextStyle {
+    color = DebugSolidColor,
+    halign = "left",
+    valign = "top"
+}
+local DebugStylebox = Stylebox {
+    color = DebugTransparentColor,
+    border = 1,
+    borderColor = DebugSolidColor
+}
 
 ---@param settings? ComponentSettings
 ---@param name? string
@@ -54,6 +67,7 @@ return function(settings, name)
     ---@field parent Container?
     local Component = {}
 
+    Component.debug = false
     Component.name = name or settings.name or "BaseComponent"
     Component.parent = settings.parent
     Component.x = settings.x or 0
@@ -70,6 +84,21 @@ return function(settings, name)
     Component.variant = settings.variant
     Component.branch = settings.branch
     Component.theme = settings.theme
+
+    function Component:drawDebugInformation()
+        if not self.debug then
+            return
+        end
+        if not self.hovered then
+            return
+        end
+        local s = tostring
+        local info = "<" ..
+            self.name ..
+            " /> (" .. s(self.x) .. ", " .. s(self.y) .. ", " .. s(self.width) .. ", " .. s(self.height) .. ")"
+        DebugStylebox:draw(self.x, self.y, self.width, self.height)
+        DebugTextStyle:draw(info, self.x + 8, self.y + 8, self.width - 16, self.height - 16)
+    end
 
     ---Searches for `self.theme[self.branch].variant[self.variant]` and returns the value, if it is found.
     ---If `self.theme` is nil then `GlobalTheme` is used instead.
@@ -139,9 +168,11 @@ return function(settings, name)
 
     ---Executes the `draw` event queue if `Component.display` is equal to `true`.
     function Component:draw()
+        if self.enabled then
+            self:capture()
+        end
         if self.display then
             self:execute('draw')
-            self:capture()
         end
     end
 

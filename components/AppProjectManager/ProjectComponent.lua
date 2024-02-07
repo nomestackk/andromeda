@@ -6,14 +6,18 @@ local Button = require "components/Button"
 
 ---@param project Project
 return function(project)
-  local ProjectComponent = VDiv {
-    height = 100
-  }
+  local ProjectComponent = VDiv { height = 100, alignmentMethod = 'position' }
 
-  ProjectComponent:addImmutable(Text({ text = project.name .. '-' .. project.author }))
-  local hdiv = HDiv()
+  local title = ProjectComponent:addImmutable(project.name .. '-' .. project.author)
+  title.height = 50
 
-  -- TODO
+  local controls = ProjectComponent:addImmutable(HDiv()) ---@cast controls HDiv
+  controls.height = 50
+
+  local delete = controls:addImmutable(Button 'Delete')
+  local rename = controls:addImmutable(Button 'Rename')
+
+  ProjectComponent:align()
 
   return ProjectComponent
 end
